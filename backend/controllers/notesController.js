@@ -1,27 +1,38 @@
 const { notesModel } = require("../models/notesModel");
+const { User } = require("../models/userModel"); // ✅ Correct import
 
-//Create a note
+// Create note
 const createNote = async (req, res) => {
-  const note = req.body;
-  let newNote = new notesModel(note);
-  let savedNote = await newNote.save();
-  console.log("Received note:", savedNote);
-  res.status(200).json({ message: "Note received successfully", note });
+  try {
+    const { title, content } = req.body;
+    const userId = req.userId;
+
+    const newNote = new notesModel({ title, content, user: userId });
+    const savedNote = await newNote.save();
+
+    // push note ID into user's notes array
+    await User.findByIdAndUpdate(userId, { $push: { notes: savedNote._id } });
+
+    console.log("Received note:", savedNote);
+    res.status(201).json({ message: "Note created successfully", note: savedNote });
+  } catch (err) {
+    console.error("Error creating note:", err);
+    res.status(500).json({ message: "Failed to create note" });
+  }
 };
 
-//Search and Get all Notes
+//Get all notes
 const getAllNotes = async (req, res) => {
   try {
     const { search } = req.query;
+    const userId = req.userId;
 
-    let query = {};
+    let query = { user: userId };
     if (search) {
-      query = {
-        $or: [
-          { title: { $regex: search, $options: "i" } },
-          { content: { $regex: search, $options: "i" } },
-        ],
-      };
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { content: { $regex: search, $options: "i" } },
+      ];
     }
 
     const notes = await notesModel.find(query).sort({ updatedAt: -1 });
@@ -32,29 +43,36 @@ const getAllNotes = async (req, res) => {
   }
 };
 
-//find a note
+// Get one Note by ID
 const getNoteById = async (req, res) => {
-  let { id } = req.params;
-  let note = await notesModel.findById(id);
-  console.log(note);
-  res.status(200).json(note);
+  try {
+    const { id } = req.params;
+    const userId = req.userId;
+
+    const note = await notesModel.findOne({ _id: id, user: userId });
+    if (!note) return res.status(404).json({ message: "Note not found" });
+
+    console.log("Fetched note:", note);
+    res.status(200).json(note);
+  } catch (err) {
+    console.error("Error fetching note:", err);
+    res.status(500).json({ message: "Failed to fetch note" });
+  }
 };
 
-//Update a note
+//Update Note by ID
 const updatedANote = async (req, res) => {
   try {
     const { id } = req.params;
-    const noteData = req.body;
+    const userId = req.userId;
 
-    const updatedNote = await notesModel.findByIdAndUpdate(
-      id,
-      { ...noteData, modifiedAt: Date.now() },
+    const updatedNote = await notesModel.findOneAndUpdate(
+      { _id: id, user: userId },
+      { ...req.body, modifiedAt: Date.now() },
       { new: true, runValidators: true }
     );
 
-    if (!updatedNote) {
-      return res.status(404).json({ message: "Note not found" });
-    }
+    if (!updatedNote) return res.status(404).json({ message: "Note not found" });
 
     res.status(200).json({
       message: "Note updated successfully",
@@ -66,11 +84,21 @@ const updatedANote = async (req, res) => {
   }
 };
 
-//delete a note
+//Delete note
 const deleteANote = async (req, res) => {
-  let { id } = req.params;
-  let deleteNote = await notesModel.findByIdAndDelete(id);
-  res.status(200).json(deleteNote);
+  try {
+    const { id } = req.params;
+    const userId = req.userId;
+
+    const deletedNote = await notesModel.findOneAndDelete({ _id: id, user: userId });
+    if (!deletedNote) return res.status(404).json({ message: "Note not found" });
+    await User.findByIdAndUpdate(userId, { $pull: { notes: id } });
+
+    res.status(200).json({ message: "Note deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting note:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
-module.exports = {createNote,getAllNotes,getNoteById,updatedANote,deleteANote};
+module.exports = { createNote, getAllNotes, getNoteById, updatedANote, deleteANote };

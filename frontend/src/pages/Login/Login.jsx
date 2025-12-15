@@ -1,14 +1,18 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Password from "../../components/Input/Password";
 import { ValidateEmail } from "../../utils/helper";
-
+import api from "../../utils/api";
+import { useEffect } from "react";
 export default function Login() {
   const navigate = useNavigate();
+
   const [login, setLogin] = useState({ email: "", password: "", error: null });
   const [loading, setLoading] = useState(false);
-
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) navigate("/dashboard");
+  }, [navigate]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setLogin((prev) => ({ ...prev, [name]: value, error: null }));
@@ -16,43 +20,66 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     if (!ValidateEmail(login.email)) {
-      setLogin((prev) => ({ ...prev, error: "Please enter a valid email address." }));
+      setLogin((prev) => ({
+        ...prev,
+        error: "Please enter a valid email address.",
+      }));
       return;
     }
     if (!login.password) {
       setLogin((prev) => ({ ...prev, error: "Please enter the password" }));
       return;
     }
+
     setLoading(true);
     try {
-      navigate("/dashboard")
-    } catch {
-      setLogin((prev) => ({ ...prev, error: "Login failed. Try again." }));
+      const res = await api.post("/auth/login", {
+        email: login.email,
+        password: login.password,
+      });
+
+      const { token, user } = res.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      navigate("/dashboard");
+    } catch (err) {
+      setLogin((prev) => ({
+        ...prev,
+        error: err.response?.data?.message || "Login failed. Try again.",
+      }));
     } finally {
       setLoading(false);
     }
-
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-blue-50 px-4">
       <div className="text-center mb-6">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-blue-600">Welcome back</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-blue-600">
+          Welcome back
+        </h1>
         <p className="text-sm sm:text-base text-blue-900/70 mt-1">
           Sign in to your account to continue taking notes
         </p>
       </div>
 
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
-        <h2 className="text-lg font-semibold text-center text-blue-600 mb-2">Log In</h2>
+        <h2 className="text-lg font-semibold text-center text-blue-600 mb-2">
+          Log In
+        </h2>
         <p className="text-sm text-gray-500 text-center mb-6">
           Enter your email and password to access your notes
         </p>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Email
             </label>
             <input
@@ -68,7 +95,10 @@ export default function Login() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Password
             </label>
             <Password
@@ -82,7 +112,10 @@ export default function Login() {
           {login.error && <p className="text-red-500 text-sm">{login.error}</p>}
 
           <div className="text-left">
-            <button type="button" className="text-sm text-blue-600 hover:underline">
+            <button
+              type="button"
+              className="text-sm text-blue-600 hover:underline"
+            >
               Forgot password?
             </button>
           </div>
@@ -97,7 +130,10 @@ export default function Login() {
 
           <p className="text-sm text-center text-gray-600 mt-4">
             Don’t have an account?{" "}
-            <Link to="/signup" className="text-blue-600 font-semibold hover:underline">
+            <Link
+              to="/signup"
+              className="text-blue-600 font-semibold hover:underline"
+            >
               Sign up
             </Link>
           </p>

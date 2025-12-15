@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { backendPort } from "../../utils/helper";
+import api from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 
 const CreateNotes = () => {
@@ -20,7 +19,7 @@ const CreateNotes = () => {
     if (!note.title.trim() && !note.content.trim()) return;
     setLoading(true);
     try {
-      await axios.post(`${backendPort}/notes/create`, note);
+      await api.post(`/notes/create`, note);
       setStatus("success");
       setNote({ title: "", content: "" });
       navigate("/dashboard", { replace: true });

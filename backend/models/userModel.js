@@ -1,6 +1,24 @@
-const { model, Schema } = require('mongoose');
+const { Schema, model } = require("mongoose");
+const bcrypt = require("bcryptjs");
 
-const userSchema = new Schema({
-    email : {type:String, require:true, unique:true},
-    password: {type:String, requ}
-})
+const userSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    notes: [{ type: Schema.Types.ObjectId, ref: "Note" }], //Notes array
+  },
+  { timestamps: true }
+);
+
+
+//Adding salt to password before saving it.
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+const User = model("User", userSchema);
+module.exports = { User };

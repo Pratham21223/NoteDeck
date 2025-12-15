@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { backendPort } from "../../utils/helper";
+import api from "../../utils/api";
 import { useNavigate, useParams } from "react-router-dom";
 import { MdEdit, MdDelete, MdArrowBack } from "react-icons/md";
 
@@ -11,29 +10,29 @@ const ViewNote = () => {
   const [status, setStatus] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch Note Details
+  //View Note by ID
   useEffect(() => {
-    const fetchNote = async () => {
+    const viewNote = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${backendPort}/notes/${id}`);
+        const res = await api.get(`/notes/${id}`);
         setNote(res.data);
       } catch (err) {
-        console.error("Error fetching note:", err);
+        console.error("Error in getting note:", err);
         setStatus("error");
       } finally {
         setLoading(false);
       }
     };
-    if (id) fetchNote();
+    if (id) viewNote();
   }, [id]);
 
-  // Delete Note
+  //Delete Note
   const handleDelete = async () => {
     const confirmDelete = window.confirm("Are you sure you want to delete this note?");
     if (!confirmDelete) return;
     try {
-      await axios.delete(`${backendPort}/notes/${id}`);
+      await api.delete(`/notes/${id}`);
       navigate("/dashboard");
     } catch (err) {
       console.error("Error deleting note:", err);
@@ -68,7 +67,7 @@ const ViewNote = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-50 px-4 py-10">
+    <div className="min-h-screen flex flex-col items-center bg-gray-50 px-4 py-10 w-full overflow-x-hidden">
       {/* Back Button */}
       <div className="w-full max-w-3xl mb-5 flex items-center">
         <button
@@ -81,14 +80,14 @@ const ViewNote = () => {
       </div>
 
       {/* Note Card */}
-      <div className="w-full max-w-3xl bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-8">
+      <div className="w-full max-w-3xl bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-8 overflow-hidden">
         {/* Title & Actions */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 pb-4 mb-4">
-          <h1 className="text-2xl sm:text-3xl font-semibold text-gray-800 wrap-break-word">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 pb-4 mb-4 w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-gray-800 wrap-break-word w-full">
             {note.title || "Untitled Note"}
           </h1>
 
-          <div className="flex gap-2 mt-3 sm:mt-0">
+          <div className="flex flex-wrap gap-2 mt-3 sm:mt-0">
             <button
               onClick={handleEdit}
               className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition"
@@ -107,7 +106,7 @@ const ViewNote = () => {
         </div>
 
         {/* Date */}
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-gray-500 mb-4 wrap-break-word w-full">
           Last updated:{" "}
           {new Date(note.updatedAt || note.createdAt).toLocaleString("en-US", {
             weekday: "short",
@@ -121,7 +120,7 @@ const ViewNote = () => {
         </p>
 
         {/* Content */}
-        <div className="text-gray-700 leading-relaxed whitespace-pre-wrap text-[15px]">
+        <div className="text-gray-700 leading-relaxed whitespace-pre-wrap text-[15px] break-words w-full max-w-full">
           {note.content || "No content available."}
         </div>
       </div>

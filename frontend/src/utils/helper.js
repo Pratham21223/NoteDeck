@@ -9,4 +9,4 @@ export const getIntials = (name) => {
     let intials=words[0][0]+words[words.length - 1][0];
     return intials.toUpperCase();
 }
-export const backendPort = "http://localhost:3000";
+export const backendPort = "https://notedeckbackend.vercel.app";

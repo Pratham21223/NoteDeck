@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 import { MdAdd } from "react-icons/md";
 import Navbar from "../../components/Navbar/Navbar";
 import NoteCard from "../../components/Cards/NoteCard";
-import { backendPort } from "../../utils/helper";
 
 const Home = () => {
   const [notes, setNotes] = useState([]);
@@ -12,15 +11,15 @@ const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ✅ Extract ?search=term from URL
+  //Searching
   const searchParams = new URLSearchParams(location.search);
   const searchQuery = searchParams.get("search") || "";
 
-  // ✅ Fetch notes (with optional search)
+  //Fetch notes (with optional search)
   const fetchNotes = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${backendPort}/notes`, {
+      const res = await api.get(`/notes`, {
         params: { search: searchQuery },
       });
       setNotes(res.data);
@@ -31,28 +30,32 @@ const Home = () => {
     }
   };
 
-  // ✅ Fetch when page loads OR when search query changes
+  //Refreshes when search changes
   useEffect(() => {
     fetchNotes();
   }, [searchQuery]);
 
-  // ✅ Delete note
+  //Delete note
   const onDelete = async (id) => {
     try {
-      await axios.delete(`${backendPort}/notes/${id}`);
+      const confirmDelete = window.confirm(
+        "Are you sure you want to delete this note?"
+      );
+      if (!confirmDelete) return;
+      await api.delete(`/notes/${id}`);
       setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
     } catch (err) {
       console.error("Error deleting note:", err);
     }
   };
 
-  // ✅ Edit note
+  //Edit note
   const onEdit = (id) => {
     navigate(`/edit/${id}`);
   };
 
   //View Note
-  const onClick= (id) => {
+  const onClick = (id) => {
     navigate(`/note/${id}`);
   };
   return (
@@ -84,14 +87,14 @@ const Home = () => {
                 })}
                 onEdit={() => onEdit(note._id)}
                 onDelete={() => onDelete(note._id)}
-                onClick={()=> onClick(note._id)}
+                onClick={() => onClick(note._id)}
               />
             ))}
           </div>
         )}
       </main>
 
-      {/* Floating Create Button */}
+      {/* Create btn */}
       <Link
         to="/createnote"
         className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-primary hover:bg-blue-600 fixed right-6 bottom-6 sm:right-10 sm:bottom-10 shadow-lg transition-transform transform hover:scale-105"

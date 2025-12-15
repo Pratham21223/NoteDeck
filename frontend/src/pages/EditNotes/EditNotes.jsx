@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { backendPort } from "../../utils/helper";
+import api from "../../utils/api";
 import { useNavigate, useParams } from "react-router-dom";
 
 const EditNote = () => {
@@ -9,11 +8,10 @@ const EditNote = () => {
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
   useEffect(() => {
     const fetchNote = async () => {
       try {
-        const res = await axios.get(`${backendPort}/notes/${id}`);
+        const res = await api.get(`/notes/${id}`);
         setNote(res.data || { title: "", content: "" });
       } catch (err) {
         console.error("Error fetching note:", err);
@@ -34,7 +32,7 @@ const EditNote = () => {
     if (!note.title.trim() && !note.content.trim()) return;
     setLoading(true);
     try {
-      await axios.put(`${backendPort}/notes/${id}`, note);
+      await api.put(`/notes/${id}`, note);
       setStatus("success");
       navigate(`/note/${id}`, { replace: true });
     } catch (err) {

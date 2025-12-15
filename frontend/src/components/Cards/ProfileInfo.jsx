@@ -1,7 +1,10 @@
 import React from "react";
 import { getIntials } from "../../utils/helper";
 
-const ProfileInfo = ({ onLogout, name = "Pratham Ramesh Kataria" }) => {
+const ProfileInfo = ({ onLogout }) => {
+  const user = JSON.parse(localStorage.getItem("user")) || { name: "User" };
+  const name = user.name;
+
   return (
     <div className="flex items-center gap-3">
       <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-semibold">

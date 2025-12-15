@@ -9,10 +9,13 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const onLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
 
-  const onLogout = () => navigate("/login");
 
-  // ✅ Debounced search handler
   const debouncedSearch = debounce((value) => {
     const trimmed = value.trim();
     if (trimmed) {
@@ -20,11 +23,10 @@ const Navbar = () => {
     } else {
       navigate("/dashboard");
     }
-  }, 400); // wait 400ms after user stops typing
+  }, 400);
 
   useEffect(() => {
     debouncedSearch(searchQuery);
-    // Cleanup debounce on unmount
     return () => debouncedSearch.cancel();
   }, [searchQuery]);
 
@@ -37,7 +39,6 @@ const Navbar = () => {
     <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-3 sm:px-5 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Left: Brand */}
           <div
             onClick={() => navigate("/dashboard")}
             className="flex items-center cursor-pointer"
@@ -47,7 +48,6 @@ const Navbar = () => {
             </h1>
           </div>
 
-          {/* Middle: Search */}
           <div className="hidden md:flex flex-1 justify-center">
             <div className="w-64 lg:w-72">
               <SearchBar
@@ -58,12 +58,10 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Right: Profile */}
           <div className="hidden sm:flex items-center gap-4">
             <ProfileInfo onLogout={onLogout} />
           </div>
 
-          {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="sm:hidden p-2 rounded-md hover:bg-gray-100 transition"
@@ -77,7 +75,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {menuOpen && (
         <div className="sm:hidden border-t border-gray-200 bg-white">
           <div className="px-4 py-3">
