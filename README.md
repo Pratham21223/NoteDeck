@@ -138,7 +138,7 @@ JWT_SECRET=your_secret_key
 ### Frontend (`src/utils/helper.js`)
 
 ```js
-export const backendPort = "https://notedeckbackend.vercel.app";
+export const backendPort = "http://localhost:3000";
 ```
 
 ---
