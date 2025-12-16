@@ -37,7 +37,7 @@ const Landing = () => {
       </header>
 
       {/* Hero Section */}
-      <main className="flex flex-col-reverse md:flex-row justify-between items-center px-8 md:px-16 py-12 md:py-20 flex-grow">
+      <main className="flex flex-col-reverse md:flex-row justify-between items-center px-8 md:px-16 py-12 md:py-20 grow">
         {/* Left */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -78,7 +78,7 @@ const Landing = () => {
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7 }}
-          className="w-72 md:w-[28rem] mb-10 md:mb-0"
+          className="w-72 md:w-md mb-10 md:mb-0"
         />
       </main>
 

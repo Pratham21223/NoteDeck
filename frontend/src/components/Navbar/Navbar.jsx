@@ -40,7 +40,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-3 sm:px-5 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/")}
             className="flex items-center cursor-pointer"
           >
             <h1 className="text-2xl ml-2 sm:ml-0 font-bold text-blue-600 tracking-tight">
