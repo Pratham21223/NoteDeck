@@ -8,6 +8,7 @@ import EditNote from "./pages/EditNotes/EditNotes";
 import ViewNote from "./pages/ViewNote/ViewNote";
 import PrivateRoute from "./components/PrivateRoute";
 import Landing from "./pages/Landing/Landing";
+import Error from "./pages/Error/Error";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
         <Route path="/createnote" element={<PrivateRoute><CreateNotes /></PrivateRoute>} />
         <Route path="/edit/:id" element={<PrivateRoute><EditNote /></PrivateRoute>} />
         <Route path="/note/:id" element={<PrivateRoute><ViewNote /></PrivateRoute>} />
+        <Route path="/*" element={<Error />} />
       </Routes>
     </BrowserRouter>
   );

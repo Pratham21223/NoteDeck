@@ -44,12 +44,24 @@ export default function Signup() {
 
     setLoading(true);
     try {
-      await api.post("/auth/register", {
+      let res = await api.post("/auth/register", {
         name: signup.name,
         email: signup.email,
         password: signup.password,
       });
-      navigate("/login");
+
+      //After signup login
+      if(res){
+        const res2 = await api.post("/auth/login", {
+        email: signup.email,
+        password: signup.password,
+      });
+
+      const { token, user } = res2.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      navigate("/dashboard");
+      }
     } catch (err) {
       setSignup((prev) => ({
         ...prev,

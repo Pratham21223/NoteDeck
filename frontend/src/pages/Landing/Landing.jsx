@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { MdNotes, MdSecurity, MdCloud } from "react-icons/md";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
+import LandingNavbar from "../../components/Navbar/LandingNavbar";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -13,29 +14,7 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-linear-to-b from-blue-50 to-white flex flex-col">
       {/* Navbar */}
-      <header className="w-full py-4 px-6 flex justify-between items-center border-b border-blue-100 bg-white/70 backdrop-blur-md sticky top-0 z-10">
-        <h1
-          onClick={() => navigate("/")}
-          className="text-2xl font-bold text-blue-600 cursor-pointer"
-        >
-          NoteDeck
-        </h1>
-        <div className="space-x-4">
-          <button
-            onClick={() => navigate("/login")}
-            className="px-5 py-2 rounded-md font-medium text-blue-600 hover:text-blue-800"
-          >
-            Login
-          </button>
-          <button
-            onClick={() => navigate("/signup")}
-            className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium"
-          >
-            Sign Up
-          </button>
-        </div>
-      </header>
-
+      <LandingNavbar/>
       {/* Hero Section */}
       <main className="flex flex-col-reverse md:flex-row justify-between items-center px-8 md:px-16 py-12 md:py-20 grow">
         {/* Left */}
