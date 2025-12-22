@@ -9,6 +9,7 @@ import ViewNote from "./pages/ViewNote/ViewNote";
 import PrivateRoute from "./components/PrivateRoute";
 import Landing from "./pages/Landing/Landing";
 import Error from "./pages/Error/Error";
+import PasswordReset from "./pages/PasswordReset/PasswordReset";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/passwordreset" element={<PasswordReset />} />
         <Route path="/" element={<Landing />} />
 
         {/* Protecting Routes */}

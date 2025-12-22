@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Links, useNavigate } from "react-router-dom";
 import Password from "../../components/Input/Password";
 import { ValidateEmail } from "../../utils/helper";
 import api from "../../utils/api";
@@ -112,12 +112,14 @@ export default function Login() {
           {login.error && <p className="text-red-500 text-sm">{login.error}</p>}
 
           <div className="text-left">
+            <Link to={"/passwordreset"}>
             <button
               type="button"
               className="text-sm text-blue-600 hover:underline"
             >
               Forgot password?
             </button>
+            </Link>
           </div>
 
           <button

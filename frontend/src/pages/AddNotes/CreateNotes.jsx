@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import api from "../../utils/api";
 import { useNavigate } from "react-router-dom";
+import { backendPort } from "../../utils/helper";
+
 
 const CreateNotes = () => {
   const [note, setNote] = useState({ title: "", content: "" });
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -14,9 +18,47 @@ const CreateNotes = () => {
     if (status) setStatus(null);
   };
 
+  // 🔥 Generate Content using Hugging Face (Frontend Only)
+ const handleGenerateAI = async () => {
+  if (!note.title.trim()) {
+    alert("Please enter a title to generate content.");
+    return;
+  }
+
+  setAiLoading(true);
+
+  try {
+    const response = await fetch(`${backendPort}/ai/generate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: note.title,
+      }),
+    });
+
+    const data = await response.json();
+
+    setNote((prev) => ({
+      ...prev,
+      content: data.content,
+    }));
+  } catch (error) {
+    console.error(error);
+    alert("Failed to generate content using AI.");
+  } finally {
+    setAiLoading(false);
+  }
+};
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!note.title.trim() && !note.content.trim()) return;
+
     setLoading(true);
     try {
       await api.post(`/notes/create`, note);
@@ -33,15 +75,16 @@ const CreateNotes = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
-      <div className="w-full max-w-3xl bg-white border rounded-lg shadow-md p-6 sm:p-8 flex flex-col justify-between h-[85vh]">
+      <div className="w-full max-w-3xl bg-white border rounded-lg shadow-md p-6 sm:p-8 flex flex-col h-[85vh]">
         <h2 className="text-2xl sm:text-3xl font-semibold text-center text-gray-800">
           Create a New Note
         </h2>
 
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col justify-between flex-1 mt-6 space-y-4"
+          className="flex flex-col flex-1 mt-6 space-y-4"
         >
+          {/* Title */}
           <input
             id="title"
             type="text"
@@ -53,11 +96,22 @@ const CreateNotes = () => {
             autoFocus
           />
 
+          {/* ✨ Generate with AI */}
+          <button
+            type="button"
+            onClick={handleGenerateAI}
+            disabled={aiLoading}
+            className="self-start text-sm px-4 py-2 rounded-md border border-blue-500 text-blue-600 hover:bg-blue-50 transition-all disabled:opacity-50"
+          >
+            {aiLoading ? "Generating..." : "✨ Generate with AI"}
+          </button>
+
+          {/* Content */}
           <textarea
             id="content"
             name="content"
             placeholder="Write your content here..."
-            className="w-full flex-1 border rounded-md p-4 text-[15px] leading-relaxed resize-none focus:ring-2 focus:ring-blue-400 focus:outline-none bg-gray-50 min-h-[35vh] max-h-[40vh]"
+            className="w-full flex-1 border rounded-md p-4 text-[15px] leading-relaxed resize-none focus:ring-2 focus:ring-blue-400 focus:outline-none bg-gray-50 min-h-[35vh]"
             onChange={handleChange}
             value={note.content}
           />
@@ -66,7 +120,7 @@ const CreateNotes = () => {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full sm:w-auto px-6 py-2.5 rounded-md bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all"
+              className="btn-primary w-full sm:w-auto px-6 py-2.5 rounded-md bg-blue-500 hover:bg-blue-600 text-white font-medium disabled:opacity-50"
             >
               {loading ? "Creating..." : "Create Note"}
             </button>
@@ -74,7 +128,7 @@ const CreateNotes = () => {
             <button
               type="button"
               onClick={() => navigate("/dashboard")}
-              className="w-full sm:w-auto px-6 py-2.5 border rounded-md text-gray-700 hover:bg-gray-100 transition-all"
+              className="w-full sm:w-auto px-6 py-2.5 border rounded-md text-gray-700 hover:bg-gray-100"
             >
               Cancel
             </button>
