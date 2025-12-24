@@ -1,11 +1,11 @@
 # 📝 NoteDeck
 
-**NoteDeck** is a full-stack **MERN Notes Application** that allows users to securely create, edit, search, and manage personal notes. It features **JWT authentication**, **user-based authorization**, an **AI-powered note generator**, a **responsive UI**, and **cloud deployment**.
+**NoteDeck** is a full-stack **MERN Notes Application** that allows users to securely create, edit, search, and manage personal notes. It features **JWT authentication**, **user-based authorization**, an **AI-powered note generator (Gemini)**, a **responsive UI**, and **cloud deployment**.
 
 🔗 **Live Demo**
 
-- Frontend: [https://notedeck-notes.vercel.app](https://notedeck-notes.vercel.app/)
-- Backend API: [https://notedeckbackend.vercel.app](https://notedeckbackend.vercel.app/)
+- **Frontend:** [https://notedeck-notes.vercel.app](https://notedeck-notes.vercel.app/)
+- **Backend API:** [https://notedeckbackend.vercel.app](https://notedeckbackend.vercel.app/)
 
 ---
 
@@ -24,10 +24,11 @@
 - View individual notes
 - Edit notes with live updates
 
-### 🤖 AI-Powered Note Generation (NEW)
+### 🤖 AI-Powered Note Generation
 
 - Generate note content using **AI** based on the note title
-- Secure backend integration with **Hugging Face Inference API**
+- Powered by **Google Gemini (Gemini 2.5 Flash)**
+- Secure backend-only AI integration
 - No API keys exposed on the frontend
 - One-click **“Generate with AI”** button
 
@@ -39,9 +40,9 @@
 
 ### 🎨 Modern UI/UX
 
-- Responsive design (mobile + desktop)
+- Fully responsive (mobile + desktop)
 - Clean dashboard layout
-- Animated landing page
+- Smooth animations on landing page
 
 ### ☁️ Deployment Ready
 
@@ -70,7 +71,7 @@
 - Mongoose
 - JWT (jsonwebtoken)
 - bcryptjs
-- Hugging Face Inference API (AI)
+- **Google Gemini AI (`@google/genai`)**
 
 ### Deployment
 
@@ -121,7 +122,7 @@ notedeck/
 1. User enters a **note title**
 2. Clicks **“Generate with AI”**
 3. Frontend sends title to backend
-4. Backend securely calls **Hugging Face Chat Completion API**
+4. Backend securely calls **Google Gemini API**
 5. Generated content is returned and auto-filled into the note editor
 
 ---
@@ -140,18 +141,18 @@ GET    /auth/me         →Getuser profile (protected)
 ### Notes (Protected)
 
 ```
-GET/notes           →Getall notes (withsearch)
-GET/notes/:id       →Get single note
-POST/notes/create    →Create note
-PUT/notes/:id       →Update note
-DELETE/notes/:id       →Delete note
+GET/notes            →Getall notes (withsearch)
+GET/notes/:id        →Get single note
+POST/notes/create     →Create note
+PUT/notes/:id        →Update note
+DELETE/notes/:id        →Delete note
 
 ```
 
 ### AI (Protected / Backend-only)
 
 ```
-POST   /ai/generate     → Generate note contentusing AI
+POST   /ai/generate       → Generate note contentusing AI
 
 ```
 
@@ -165,7 +166,7 @@ POST   /ai/generate     → Generate note contentusing AI
 PORT=3000
 MONGO_URL=your_mongodb_url
 JWT_SECRET=your_jwt_secret
-HF_API_KEY=your_huggingface_api_key
+GEMINI_API_KEY=your_google_gemini_api_key
 
 ```
 
@@ -214,9 +215,9 @@ npm run dev
 - Protected frontend & backend routes
 - Axios request & response interceptors
 - User-based data isolation
-- AI integration via secure backend proxy
+- AI integration via secure backend proxy (Gemini)
 - Debounced search optimization
-- Clean and scalable project architecture
+- Clean, scalable project architecture
 - Environment-based configuration & secret management
 
 ---
@@ -227,6 +228,7 @@ npm run dev
 - Google OAuth login
 - Rich text editor for notes
 - User profile customization
+- AI regenerate / improve options
 
 ---
 
