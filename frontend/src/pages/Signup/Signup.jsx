@@ -7,8 +7,8 @@ import { useEffect } from "react";
 export default function Signup() {
   const navigate = useNavigate();
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) navigate("/dashboard");
+    const token = localStorage.getItem("token");
+    if (token) navigate("/dashboard");
   }, [navigate]);
   const [signup, setSignup] = useState({
     name: "",
@@ -57,7 +57,8 @@ export default function Signup() {
         password: signup.password,
       });
 
-      const { user } = res2.data;
+      const { token, user } = res2.data;
+      localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
       navigate("/dashboard");
       }

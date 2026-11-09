@@ -1,4 +1,5 @@
 // src/utils/auth.js
 export const isLoggedIn = () => {
-  return !!localStorage.getItem("user");
+  const token = localStorage.getItem("token");
+  return !!token;
 };
