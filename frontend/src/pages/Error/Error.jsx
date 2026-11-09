@@ -5,8 +5,7 @@ import LandingNavbar from "../../components/Navbar/LandingNavbar";
 
 const Error = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  const isLoggedIn = !!token;
+  const isLoggedIn = !!localStorage.getItem("user");
 
   return (
     <>

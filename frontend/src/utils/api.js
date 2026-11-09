@@ -1,21 +1,16 @@
 // src/utils/api.js
 import axios from "axios";
-import { backendPort } from "./helper"; // your helper.js
+import { backendPort } from "./helper";
 
-const api = axios.create({ baseURL: backendPort });
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
+const api = axios.create({
+  baseURL: backendPort,
+  withCredentials: true,
 });
 
-// OPTIONAL: handle 401 globally (auto logout)
 api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/login";
     }

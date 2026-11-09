@@ -68,8 +68,7 @@ const ForgotPassword = () => {
           password: form.password,
         });
         
-        const { token, user } = res.data;
-        localStorage.setItem("token", token);
+        const { user } = res.data;
         localStorage.setItem("user", JSON.stringify(user));
         await navigate("/dashboard");
         alert("Password changed successfully, redirecting to Dashboard.")

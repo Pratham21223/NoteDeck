@@ -8,8 +8,8 @@ import LandingNavbar from "../../components/Navbar/LandingNavbar";
 const Landing = () => {
   const navigate = useNavigate();
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) navigate("/dashboard");
+    const user = localStorage.getItem("user");
+    if (user) navigate("/dashboard");
   }, [navigate]);
   return (
     <div className="min-h-screen bg-linear-to-b from-blue-50 to-white flex flex-col">

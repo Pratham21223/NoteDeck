@@ -40,8 +40,7 @@ export default function Login() {
         password: login.password,
       });
 
-      const { token, user } = res.data;
-      localStorage.setItem("token", token);
+      const { user } = res.data;
       localStorage.setItem("user", JSON.stringify(user));
 
       navigate("/dashboard");
