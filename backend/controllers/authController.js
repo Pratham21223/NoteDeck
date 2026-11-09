@@ -41,15 +41,29 @@ const loginUser = async (req, res) => {
       expiresIn: "7d",
     });
 
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
+
     res.json({
       message: "Login successful",
-      token,
       user: { _id: user._id, name: user.name, email: user.email },
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error during login" });
   }
+};
+
+const logoutUser = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+  });
+  res.json({ message: "Logout successful" });
 };
 
 //Get user info
@@ -115,4 +129,11 @@ const checkEmail = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getUserProfile, getUserByEmail,checkEmail };
+module.exports = {
+  registerUser,
+  loginUser,
+  logoutUser,
+  getUserProfile,
+  getUserByEmail,
+  checkEmail,
+};
